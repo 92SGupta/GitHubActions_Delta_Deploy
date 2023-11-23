@@ -63,10 +63,11 @@ jobs:
           if [ $(cat force-app-delta/package/package.xml | wc -l) -gt 4 ];then
             if [ $(egrep 'name>ApexClass|name>Apextrigger|name>Flow' force-app-delta/package/package.xml | wc -l) -gt 1 ];then
               echo "Deploying Delta and not running Apex tests"
-              sfdx force:source:deploy --ignorewarnings --manifest "./force-app-delta/package/package.xml" -l NoTestRun -w 100 --checkonly -u myOrg --json
+              sfdx force:source:deploy --ignorewarnings --manifest "./force-app-delta/package/package.xml" -l NoTestRun -w 100 --checkonly -u QA
             else 
               echo "Deploying Delta and Runing all Local Tests since this changes introduces updates in Apex Classes and Flows"
-              sfdx force:source:deploy --ignorewarnings --manifest "./force-app-delta/package/package.xml" -l RunLocalTests -w 100 --checkonly -u myOrg --json
+              #sfdx force:source:deploy --ignorewarnings --manifest "./force-app-delta/package/package.xml" -l RunLocalTests -w 100 --checkonly -u QA
+              sfdx force:source:deploy --ignorewarnings --manifest "./force-app-delta/package/package.xml" -l NoTestRun -w 100 --checkonly -u QA
             fi
             if [ $? -ne 0 ]; then
               echo "SF - deployment Failed"
@@ -83,7 +84,7 @@ jobs:
           export HOME=/root
           if grep -q '<types>' ./force-app-delta/destructiveChanges/destructiveChanges.xml ; then
              echo "Removing the below components: \n `cat force-app-delta/destructiveChanges/destructiveChanges.xml`"
-             sfdx force:source:deploy --ignorewarnings --manifest  "./force-app-delta/package/package.xml" --postdestructivechanges "./force-app-delta/destructiveChanges/destructiveChanges.xml" -l NoTestRun -w 100 -c -u myOrg --json
+             sfdx force:source:deploy --ignorewarnings --manifest  "./force-app-delta/package/package.xml" --postdestructivechanges "./force-app-delta/destructiveChanges/destructiveChanges.xml" -l NoTestRun -w 100 -c -u QA --json
           else
              echo "No destructive changes found"
           fi
