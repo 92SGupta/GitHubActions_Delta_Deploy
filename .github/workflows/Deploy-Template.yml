@@ -33,7 +33,7 @@ jobs:
         cat force-app-delta/package/package.xml
         if [ -d force-app-delta ]; then
             echo "####### force:source:deploy"
-          sfdx force:source:deploy --sourcepath force-app-delta/package/package.xml --targetusername myTarget --verbose
+          sfdx force:source:deploy -x force-app-delta/package/package.xml --targetusername myTarget --verbose
         else
           echo "### NO SF DELTA-FOLDER FOUND"
         fi
