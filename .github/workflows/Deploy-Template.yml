@@ -17,7 +17,7 @@ jobs:
     - name: SF deploy	    
       run: |
         export HOME=/root
-        git config --global --add safe.directory safe.directory "$GITHUB_WORKSPACE"
+        git config --global --add safe.directory "$GITHUB_WORKSPACE"
         echo ${{ secrets.sfdx_url }}  > env.sfdx
         sfdx force:auth:sfdxurl:store -d -a myTarget -f env.sfdx
         if [ -d force-app-delta ]; then

@@ -25,8 +25,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      # CHeckout from GIT. We checkout both HEAD and BASE branches to generate DELTA
-      # git config remote.origin.fetch '+refs/heads/*:refs/remotes/origin/*'
+      # Checkout from GIT.
       - name: Checkout from GIT. We checkout both HEAD and BASE branches to generate DELTA
         run: |
           export HOME=/root
@@ -78,7 +77,7 @@ jobs:
           fi
 
       # Delta Validation to target Org
-      - name: Delta Validation to target Org + Destructive changes without running test classes. If this step FAILS job is still success
+      - name: Delta Validation to target Org + Destructive changes without running test classes.
         continue-on-error: true
         run: |
           export HOME=/root
