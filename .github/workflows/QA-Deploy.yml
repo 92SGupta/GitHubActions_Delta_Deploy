@@ -9,4 +9,4 @@ jobs:
   QA-deploy:
     uses: ./.github/workflows/Deploy-Template.yml
     secrets:
-      sfdx_url: ${{ secrets.DEMO_QA }}
+      sfdx_url: ${{ secrets.QA_SFDX_URL }}
