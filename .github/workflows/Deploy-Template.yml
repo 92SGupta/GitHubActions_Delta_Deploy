@@ -29,7 +29,7 @@ jobs:
           echo "Commit not found in target org, populate the VBTDeployKey_SF and  then rerun the pipeline"
           exit 1
         fi
-        mkdir force-app-delta;sfdx sgd:source:delta -f $org_hash -u myTarget --output force-app-delta
+        mkdir force-app-delta;sfdx sgd:source:delta -f $org_hash -s force-app --output force-app-delta --generate-delta
         cat force-app-delta/package/package.xml
         if [ -d force-app-delta ]; then
             echo "####### force:source:deploy"
