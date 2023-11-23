@@ -6,7 +6,7 @@ on:
     branches: [ develop ]
   workflow_dispatch:
 jobs:
-  deploy:
+  QA-deploy:
     uses: ./.github/workflows/Deploy-Template.yml
     secrets:
       sfdx_url: ${{ secrets.DEMO_QA }}
