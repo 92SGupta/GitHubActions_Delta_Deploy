@@ -31,11 +31,11 @@ jobs:
         fi
         mkdir force-app-delta;sfdx sgd:source:delta -f $org_hash -s force-app --output force-app-delta --generate-delta
         cat force-app-delta/package/package.xml
-        if [ -d force-app-delta ]; then
+        if [ $(cat force-app-delta/package/package.xml | wc -l) -gt 4 ];then
             echo "####### force:source:deploy"
-          sfdx force:source:deploy -x force-app-delta/package/package.xml --targetusername myTarget --verbose
+          sfdx force:source:deploy --manifest force-app-delta/package/package.xml --targetusername myTarget --verbose  --ignorewarnings
         else
-          echo "### NO SF DELTA-FOLDER FOUND"
+          echo "### NO SF DELTA FOUND"
         fi
     - name: Vlocity deploy   
       run: |
