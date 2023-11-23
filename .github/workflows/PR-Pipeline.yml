@@ -36,8 +36,8 @@ jobs:
           git checkout ${{ github.BASE_REF }}
           git checkout ${{ github.HEAD_REF }}
 
-      # Run SFDX GIT and creates delta
-      - name: Run sfdx git delta and creates delta
+      # Run SFDX GIT and create delta
+      - name: Run sfdx git delta and create delta
         run: |
           export HOME=/root
           mkdir force-app-delta
@@ -50,14 +50,14 @@ jobs:
           cat force-app-delta/destructiveChanges/destructiveChanges.xml
 
       #Authentication to Target org
-      - name: Write the token into a file and authenticate to Target Org
+      - name: Authenticate Target Org
         run: |
           export HOME=/root 
           echo ${{ secrets.DEMO_QA }} > token.txt         
           sfdx force:auth:sfdxurl:store -f token.txt -a QA -s
 
-      # Delta Validation to target Org. If changes are related with Apex classes or flows then we execute test classes. Errors are inside the JSON node "result.details.componentFailures" for component failure
-      - name: Delta Validation to target Org. If changes are related with Apex classes or flows then we execute test classes. Errors are inside the JSON node "result.details.componentFailures" for component failure
+      # Delta Validation to target Org. 
+      - name: Delta Validation to target Org.
         run: |
           export HOME=/root
           if [ $(cat force-app-delta/package/package.xml | wc -l) -gt 4 ];then
@@ -78,13 +78,13 @@ jobs:
           fi
 
       # Delta Validation to target Org
-      - name: Delta Validation to target Org + Destructive changes without running test classes. If this tep FAILS job is still success
+      - name: Delta Validation to target Org + Destructive changes without running test classes. If this step FAILS job is still success
         continue-on-error: true
         run: |
           export HOME=/root
           if grep -q '<types>' ./force-app-delta/destructiveChanges/destructiveChanges.xml ; then
              echo "Removing the below components: \n `cat force-app-delta/destructiveChanges/destructiveChanges.xml`"
-             sfdx force:source:deploy --ignorewarnings --manifest  "./force-app-delta/package/package.xml" --postdestructivechanges "./force-app-delta/destructiveChanges/destructiveChanges.xml" -l NoTestRun -w 100 -c -u QA --json
+             sfdx force:source:deploy --ignorewarnings --manifest  "./force-app-delta/package/package.xml" --postdestructivechanges "./force-app-delta/destructiveChanges/destructiveChanges.xml" -l NoTestRun -w 100 -c -u QA
           else
              echo "No destructive changes found"
           fi
