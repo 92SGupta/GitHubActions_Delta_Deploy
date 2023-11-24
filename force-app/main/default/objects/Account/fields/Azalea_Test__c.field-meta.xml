@@ -3,7 +3,7 @@
     <fullName>Azalea_Test__c</fullName>
     <externalId>false</externalId>
     <label>Azalea_Test</label>
-    <length>25</length>
+    <length>27</length>
     <required>false</required>
     <trackFeedHistory>false</trackFeedHistory>
     <type>Text</type>
