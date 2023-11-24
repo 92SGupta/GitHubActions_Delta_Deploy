@@ -30,10 +30,14 @@ jobs:
           exit 1
         fi
         mkdir force-app-delta;sfdx sgd:source:delta -f $org_hash -s force-app --output force-app-delta --generate-delta
-        cat force-app-delta/package/package.xml
+        echo "Delta Changes are as below:"
+          cat force-app-delta/package/package.xml
+        echo "Destructive changes are as below:"
+          
         if [ $(cat force-app-delta/package/package.xml | wc -l) -gt 4 ];then
-            echo "####### force:source:deploy"
-          sfdx force:source:deploy --manifest force-app-delta/package/package.xml --target-org myTarget --verbose  --ignorewarnings
+          echo "Starting the Deployment with any Post Destructive Changes"
+          #sfdx force:source:deploy --manifest force-app-delta/package/package.xml --target-org myTarget --verbose  --ignorewarnings
+          sfdx force:source:deploy  --manifest  "force-app-delta/package/package.xml" --postdestructivechanges "force-app-delta/destructiveChanges/destructiveChanges.xml"  --target-org myTarget --verbose  --ignorewarnings
         else
           echo "### NO SF DELTA FOUND"
         fi
