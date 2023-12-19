@@ -1,0 +1,52 @@
+name: Template - Deploy
+
+on:
+  workflow_call:
+    secrets:
+      sfdx_url:
+        required: true
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    container:
+      image: jfgarcia268/vlocity_sfdx:latest
+    steps:  
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+    - name: SF deploy	    
+      run: |
+        export HOME=/root
+        git config --global --add safe.directory "$GITHUB_WORKSPACE"
+        echo ${{ secrets.sfdx_url }}  > env.sfdx
+        sfdx force:auth:sfdxurl:store -d -a myTarget -f env.sfdx
+        if [ -d force-app-delta ]; then
+            rm -rf force-app-delta  
+        fi
+        sfdx data:query -q "SELECT MasterLabel,Value FROM OmniInteractionConfig where MasterLabel ='VBTDeployKey_SF'" --target-org myTarget -r human > key_file.txt
+        org_hash=$(cat key_file.txt |grep 'VBTDeployKey_SF' | awk -F' ' '{print $2}')
+        if [ -z $org_hash ];then
+          echo "Commit not found in target org, populate the VBTDeployKey_SF and  then rerun the pipeline"
+          exit 1
+        fi
+        mkdir force-app-delta;sfdx sgd:source:delta -f $org_hash -s force-app --output force-app-delta --generate-delta
+        echo "Delta Changes are as below:"
+          cat force-app-delta/package/package.xml
+        echo "Destructive changes are as below:"
+          
+        if [ $(cat force-app-delta/package/package.xml | wc -l) -gt 4 ];then
+          echo "Starting the Deployment with any Post Destructive Changes"
+          #sfdx force:source:deploy --manifest force-app-delta/package/package.xml --target-org myTarget --verbose  --ignorewarnings
+          sfdx force:source:deploy  --manifest  "force-app-delta/package/package.xml" --postdestructivechanges "force-app-delta/destructiveChanges/destructiveChanges.xml"  --target-org myTarget --verbose  --ignorewarnings
+        else
+          echo "### NO SF DELTA FOUND"
+        fi
+        echo "Updating the Salesforce Key"
+        head_commit=$(git rev-parse HEAD)
+        sfdx data:update:record -s OmniInteractionConfig  -w "MasterLabel='VBTDeployKey_SF'" -v "Value='$head_commit'" --target-org myTarget
+    - name: Vlocity deploy   
+      run: |
+        git config --global --add safe.directory "$GITHUB_WORKSPACE"
+        echo ${{ secrets.sfdx_url }} > env.sfdx
+        sfdx force:auth:sfdxurl:store -d -a myTarget -f env.sfdx
+        vlocity -sfdx.username myTarget -job Deploy_Delta.yaml packDeploy --verbose true --simpleLogging true
