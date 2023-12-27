@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     inputs:
       Check_only:
-        description: 'Only Validate the Changes instead of deploying directly"
+        description: 'Only Validate the Changes instead of deploying directly'
         required: true
         default: 'false'
       Test_Class:
