@@ -5,6 +5,15 @@ on:
   push:
     branches: [ develop ]
   workflow_dispatch:
+    inputs:
+      Check_only:
+        description: 'Only Validate the Changes instead of deploying directly"
+        required: true
+        default: 'false'
+      Test_Class:
+        description: 'Provide the comma separated list of test classes' 
+        required: true
+        default: 'DummyClass'
 jobs:
   QA-deploy:
     uses: ./.github/workflows/Deploy-Template.yml
