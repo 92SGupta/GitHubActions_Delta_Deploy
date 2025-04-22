@@ -21,8 +21,14 @@ jobs:
         echo ${{ secrets.sfdx_url }}  > env.sfdx
         sfdx force:auth:sfdxurl:store -d -a myTarget -f env.sfdx
         exit 1
+    #- name: Notify failed build
+    #  uses: jayqi/failed-build-issue-action@v1
+    #  if: failure()
+    #  with:
+    #    github-token: ${{ secrets.GITHUB_TOKEN }}
     - name: Notify failed build
-      uses: jayqi/failed-build-issue-action@v1
-      if: failure()
-      with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+          gh issue --repo ${{ github.repository }} \
+            create --title "Scheduled validation failed" --body "UAT Full repo validation has failed. Check the logs here **${{ github.workflow }}**" --assignees "@me" --label "build failed"
+      env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
