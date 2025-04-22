@@ -1,0 +1,26 @@
+name: Create_issues
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the master branch
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:  
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 1
+    - name: SF deploy     
+      run: |
+        export HOME=/root
+        git config --global --add safe.directory "$GITHUB_WORKSPACE"
+        echo ${{ secrets.sfdx_url }}  > env.sfdx
+        sfdx force:auth:sfdxurl:store -d -a myTarget -f env.sfdx
+        exit 1
+      - name: Notify failed build
+        uses: jayqi/failed-build-issue-action@v1
+        if: failure() && github.event.pull_request == null
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
