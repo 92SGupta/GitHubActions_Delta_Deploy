@@ -30,6 +30,6 @@ jobs:
       if: failure()
       run: |
           gh issue --repo ${{ github.repository }} \
-            create --title "Scheduled validation failed" --body "UAT Full repo validation has failed. Check the logs here **${{ github.workflow }}**" --assignee "92SGupta" --label "build failed"
+            create --title "Scheduled validation failed" --body "UAT Full repo validation has failed. Check the logs here ${{ github.workflow }}" --assignee "92SGupta" --label "build failed"
       env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
