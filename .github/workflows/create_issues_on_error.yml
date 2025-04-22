@@ -21,6 +21,6 @@ jobs:
         exit 1
     - name: Notify failed build
       uses: jayqi/failed-build-issue-action@v1
-      if: failure() && github.event.pull_request == null
+      if: failure()
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
