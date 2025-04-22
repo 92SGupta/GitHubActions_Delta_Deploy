@@ -27,6 +27,7 @@ jobs:
     #  with:
     #    github-token: ${{ secrets.GITHUB_TOKEN }}
     - name: Notify failed build
+      if: failure()
       run: |
           gh issue --repo ${{ github.repository }} \
             create --title "Scheduled validation failed" --body "UAT Full repo validation has failed. Check the logs here **${{ github.workflow }}**" --assignees "@me" --label "build failed"
