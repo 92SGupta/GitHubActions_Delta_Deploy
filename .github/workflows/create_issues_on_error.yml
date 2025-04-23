@@ -29,8 +29,7 @@ jobs:
     - name: Notify failed build
       if: failure()
       run: |
-          echo "workflow_url=$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" >> "$GITHUB_ENV"
           gh issue --repo ${{ github.repository }} \
-            create --title "Scheduled validation failed" --body "UAT Full repo validation has failed. Check the logs here $workflow_url. Fix the errors in the repo" --assignee "92SGupta" --label "build failed"
+            create --title "Scheduled validation failed" --body "UAT Full repo validation has failed. Check the logs here $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID." --assignee "92SGupta" --label "build failed"
       env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

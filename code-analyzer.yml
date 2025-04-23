@@ -1,0 +1,7 @@
+rules:
+    regex:
+       NoTrailingWhitespace:
+         tags: ["CodeFormat"]
+engines:
+    flowtest:
+        disable_engine: true
